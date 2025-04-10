@@ -13,18 +13,23 @@ import scipy.signal as sig
 import matplotlib.pyplot as plt
 plt.ion()
 from expyfun import stimuli as stim
-import pyfftw.interfaces.numpy_fft as fft
+import expyfun
+try:
+    import pyfftw.interfaces.numpy_fft as fft
+except ModuleNotFoundError:
+    import numpy.fft as fft
 from expyfun import ExperimentController
 
 base_vol = 0.01
-isi = 0.33  # half period (seconds)
+isi = 0.2  # half period (seconds)
+print('Running...')
 
 # Set up the left an right sounds to play
 sound_files = None  # ['left.wav', 'right.wav']
 if sound_files is None:
-    fs = 44100
+    fs = 48000
     fc = 2e3
-    sound_len = int(np.round(isi * 0.8 * fs))
+    sound_len = int(np.round(isi * 0.6 * fs))
     sound_dur = float(sound_len) / fs
 #    sounds = stim.window_edges(np.random.randn(1, sound_len), fs,
 #                               sound_dur / 2.5)
@@ -73,7 +78,7 @@ def delay(x, time, fs, axis=-1, keeplength=False, pad=1):
     # x[n-k] <--> X(jw)e^(-jwk) where w in [0, 2pi)
     if type(time) is not int:
         theta = (-np.arange(new_len).astype(float) * fs * 2 * np.pi / new_len *
-                 (time - np.float(samps) / fs))
+                 (time - float(samps) / fs))
         theta[-(new_len // 2) + 1:] = -theta[(new_len // 2):1:-1]
         st = [1 for _ in range(x.ndim)]
         st[axis] = new_len
@@ -88,7 +93,7 @@ def delay(x, time, fs, axis=-1, keeplength=False, pad=1):
     return x
 
 lr = 'LR'
-n_delay = 1024 / 2
+n_delay = 1024 // 2
 itds = np.exp(np.linspace(np.log(1e-6), np.log(750e-6), n_delay))
 itd_max = 1000e-6
 itds = np.linspace(0, itd_max, n_delay)
@@ -101,19 +106,29 @@ for ii, itd in enumerate(itds):
 
 info_string = \
     '''
-<pre>   Breath:  5 seconds
-Heartbeat:  0.8 seconds
-    Blink:  0.2 seconds
+   Breath:  5        seconds\n
+Heartbeat:  0.8      seconds\n
+    Blink:  0.2      seconds\n
+      '''
+itd_string = \
+    '''
+    \n\n\n\n
       ITD: %+1.6f seconds
       '''
-info_string = '<pre>Interaural Time Difference: %+1.6f seconds'
+# info_string = '<pre>Interaural Time Difference: %+1.6f seconds'
 
 pygame.init()
 pygame.joystick.init()
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
-
+params = {  # maybe just make this use pyglet instead, but this should work
+    'TYPE': 'sound_card',
+    'SOUND_CARD_API': 'MME',
+    'SOUND_CARD_NAME': 'Microsoft Sound Mapper - Output',
+    'SOUND_CARD_TRIGGER_CHANNELS': 0,
+    }
+controller = expyfun.SoundCardController(params, stim_fs=fs)
 def get_sound_ind():
     pygame.event.pump()
     if not joystick.get_button(0):
@@ -123,11 +138,13 @@ def get_sound_ind():
     else:
         ind = itd = 0
     return (itd, np.abs(ind))
-    
+
 
 with ExperimentController('ITD', stim_rms=base_vol,
                           output_dir=None, check_rms=None, participant='PSC',
-                          session='', verbose=0) as ec:
+                          session='', verbose=None, version='dev',
+                          audio_controller=params, full_screen=True,
+                          trigger_controller='dummy') as ec:
     t0 = -np.inf
     while(1):
         ec.check_force_quit()
@@ -138,8 +155,10 @@ with ExperimentController('ITD', stim_rms=base_vol,
             color = [1, oc, oc]
         else:
             color = [oc, oc, 1]
-        ec.screen_text(info_string % itd,
-                       font_name='Courier', font_size=40, color=color)
+        ec.screen_text(info_string,
+                       font_name='Courier New', font_size=40, color='w')
+        ec.screen_text(itd_string % itd,
+                       font_name='Courier New', font_size=40, color=color)
         ec.flip()
         y = np.concatenate((x[0][np.newaxis, :],
                             x[ind][np.newaxis, :]), 0)
