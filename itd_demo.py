@@ -20,6 +20,8 @@ except ModuleNotFoundError:
     import numpy.fft as fft
 from expyfun import ExperimentController
 
+
+font_size = 32
 base_vol = 0.01
 isi = 0.2  # half period (seconds)
 print('Running...')
@@ -128,7 +130,7 @@ params = {  # maybe just make this use pyglet instead, but this should work
     'SOUND_CARD_NAME': 'Microsoft Sound Mapper - Output',
     'SOUND_CARD_TRIGGER_CHANNELS': 0,
     }
-controller = expyfun.SoundCardController(params, stim_fs=fs)
+# controller = expyfun.SoundCardController(params, stim_fs=fs)
 def get_sound_ind():
     pygame.event.pump()
     if not joystick.get_button(0):
@@ -156,9 +158,9 @@ with ExperimentController('ITD', stim_rms=base_vol,
         else:
             color = [oc, oc, 1]
         ec.screen_text(info_string,
-                       font_name='Courier New', font_size=40, color='w')
+                       font_name='Courier New', font_size=font_size, color='w')
         ec.screen_text(itd_string % itd,
-                       font_name='Courier New', font_size=40, color=color)
+                       font_name='Courier New', font_size=font_size, color=color)
         ec.flip()
         y = np.concatenate((x[0][np.newaxis, :],
                             x[ind][np.newaxis, :]), 0)

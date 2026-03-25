@@ -120,7 +120,7 @@ class Target(object):
 
 
         if self.player.playing:
-            self.tex = self.player.get_texture()
+            self.tex = self.player.texture
             self.tex.anchor_x = int(self.tex.width / 2)
             self.tex.anchor_y = int(self.tex.height / 2)
 
@@ -147,7 +147,7 @@ class Target(object):
     def update_label(self):
         if self.label is None:
             x = self._screen.width / 2
-            y = self._screen.height / 2 - self.player.get_texture().height / 2
+            y = self._screen.height / 2 - self.player.texture.height / 2
             self.label = pyglet.text.Label(text='X', x=x, y=y,
                                            anchor_x='center',
                                            anchor_y='top')
@@ -164,7 +164,7 @@ class Target(object):
 # Initialize everything
 # =============================================================================
 # Set up the window and event handlers
-display = pyglet.canvas.get_display()
+display = pyglet.display.get_display()
 screen = display.get_default_screen()
 win_kwargs = dict(width=screen.width, height=screen.height,
                   caption='Maskers', fullscreen=True,
@@ -234,11 +234,11 @@ line_y_bot = liney-line_spacing
 line_y_top = liney+line_spacing
 line_top = pyglet.shapes.Line(linex, line_y_top,
                               linex+line_width, line_y_top,
-                              width=int(pad//2), color=nl_col,
+                              thickness=int(pad//2), color=nl_col,
                               batch=batch)
 line_bot = pyglet.shapes.Line(linex, line_y_bot,
                               linex+line_width, line_y_bot,
-                              width=int(pad//2), color=nl_col,
+                              thickness=int(pad//2), color=nl_col,
                               batch=batch)
 # d_maj = pad*2
 # d_min = pad
@@ -251,7 +251,7 @@ line_bot = pyglet.shapes.Line(linex, line_y_bot,
 # note_base = pyglet.shapes.Ellipse(linex+line_width//2, ely,
 #                                   d_maj, d_min, color=notecol, batch=batch)
 # note_stem = pyglet.shapes.Line(stem_x, stem_y, stem_x, stem_y+stem_h,
-#                                width=stem_thickness, color=notecol,
+#                                thickness=stem_thickness, color=notecol,
 #                                batch=batch)
 
 note_x = linex+line_width//2
