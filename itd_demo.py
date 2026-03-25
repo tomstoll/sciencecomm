@@ -129,6 +129,7 @@ params = {  # maybe just make this use pyglet instead, but this should work
     'SOUND_CARD_API': 'MME',
     'SOUND_CARD_NAME': 'Microsoft Sound Mapper - Output',
     'SOUND_CARD_TRIGGER_CHANNELS': 0,
+    'SOUND_CARD_BACKEND': 'rtmixer',
     }
 # controller = expyfun.SoundCardController(params, stim_fs=fs)
 def get_sound_ind():
