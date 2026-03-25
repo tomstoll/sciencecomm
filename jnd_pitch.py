@@ -13,8 +13,9 @@ from expyfun import ExperimentController
 
 fs = 48000
 stim_rms = .01
-dur_tone = 0.8
-dur_pause = 0.3
+dur_tone = 0.65
+dur_pause = 0.15
+tracker_trials = 15
 n_intervals = 3
 colors = [[0, 1, 0], [1, 1, 0], [1, 0, 0]]
 dur_tot = n_intervals * (dur_tone + dur_pause)
@@ -51,7 +52,6 @@ params = {  # maybe just make this use pyglet instead, but this should work
     'SOUND_CARD_TRIGGER_CHANNELS': 0,
     }
 pos_text = (0, -2.5)
-tracker_trials = 12
 with ExperimentController('Pitch', stim_rms=stim_rms,
                           output_dir=None, check_rms=None, participant='PSC',
                           session='', verbose=None, version='dev',

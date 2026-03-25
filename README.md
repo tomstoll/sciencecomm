@@ -1,5 +1,8 @@
 These demos were updated and used at BrainsRule! 2025. 
 
+You'll need to have python installed to run these demos (e.g., through miniconda). You can install the necessary packages with `pip install mne, rtmixer, pyglet, pygame, expyfun`. 
+For the masking demo, you'll also need to have FFmpeg installed.
+
 Issues or additional updates to be completed include:
 1. jnd_pitch.py:
    1. Allow the adaptive track to be restarted.
